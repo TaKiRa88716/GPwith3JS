@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<style>
+		<title>HW1-Game physics and sound</title>
+	#info {
+		position: absolute;
+		top: 10px; width: 100%;
+		
+		padding: 5px;
+		text-align: center;
+		font-size: 20px;
+		color: #ffff00
+	} 
+	</style>
+</head>
+
+<body>
+
+	<audio id="aud" style="display:none">
+    <source src="./sounds/b.mp3" type='audio/mp3'>
+  </audio>
+
+  <div id='info'> Game in Three.JS <br> </div>
+	<script src="https://threejs.org/build/three.min.js"></script>
+	<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+  
+  <script>
+  	var renderer, scene, camera;
+		var controls;
+		var clock, dt;
+
+		var pucks = [];
+		var walls = [];
+
+		var listener, bgm;
+		
+		class Color {
+		    static randomHSL() {
+		        return {
+		            "h": Math.random(),
+		            "s": Math.random() / 2 + 0.5,
+		            "l": Math.random() / 2 + 0.25
+		        }
+		    }
+		}
+
+		class Puck {
+		    static speed = 80;
+		    static radius = 15;
+		    static r2 = Puck.radius * Puck.radius;
+		    static sqR = Puck.radius * 2 * Puck.radius * 2;
+		    constructor(listener) {
+		        let color = Color.randomHSL();
+		        let puckColor = new THREE.Color().setHSL(color.h, color.s, color.l);
+		        this.colorLight = new THREE.PointLight(puckColor, 1.2, 100);
+		        this.colorLight.position.y = 5;
+		        this.puck = new THREE.Mesh(
+		            new THREE.CylinderGeometry(Puck.radius, Puck.radius, 4, 64),
+		            new THREE.MeshBasicMaterial({ color: puckColor })
+		        );
+		        this.puck.position.y = 2;
+		        this.puck.add(this.colorLight);
+		        this.puckPropInit();
+		    }
+
+		    puckPropInit() {
+		        this.force = new THREE.Vector3(0, 0, 0);
+		        this.vel = new THREE.Vector3(
+		            Math.floor(Math.random() < 0.5 ? Puck.speed : -Puck.speed),
+		            0,
+		            Math.floor(Math.random() < 0.5 ? Puck.speed : -Puck.speed)
+		        );
+		        this.pos = new THREE.Vector3(Math.random() * 370 - 185, 2, Math.random() * 370 - 185);
+		    }
+
+		    isBound(p) {
+		        if (p) {
+		            aud.play(0);
+		            aud.play();
+		        }
+		    }
+		}
+
+		class Wall {
+		    static cR = 1.0;
+		    static eps = 1e-3; // 0.001 
+		    constructor(position, size, point, normal) {
+		        this.wall = new THREE.Mesh(
+		            new THREE.BoxGeometry(size.x, size.y, size.z),
+		            new THREE.MeshPhongMaterial({
+		                'transparent': true,
+		                'opacity': 0.6
+		            })
+		        );
+		        this.wall.position.copy(position);
+		        this.point = point;
+		        this.normal = normal;
+		    }
+		}
+
+		class Bound {
+		    static boundPuck(puck1, puck2) {
+		        
+		        let sqDis = puck1.pos.distanceToSquared(puck2.pos);
+		        if (sqDis <= Puck.sqR) {
+		            let x1x2 = puck1.pos.clone().sub(puck2.pos);
+		            let x2x1 = x1x2.multiplyScalar(-1);
+
+		            let tempVel = puck1.vel.clone().sub(
+		                x1x2.clone().multiplyScalar(
+		                    puck1.vel.clone().sub(puck2.vel).dot(
+		                        x1x2.clone()
+		                    ) / sqDis
+		                )
+		            );
+		            puck2.vel.sub( //v2-
+		                x2x1.clone().multiplyScalar(
+		                    puck2.vel.clone().sub(puck1.vel).dot(
+		                        x2x1.clone()
+		                    ) / sqDis
+		                )
+		            );
+		            
+		            puck1.vel = tempVel;
+		            
+		            let t = x2x1.clone().normalize();
+		        
+		            if (t.x == 0) {
+		                if (t.z == 0) {
+		                    puck1.pos.x += Math.random() * 2;
+		                    puck1.pos.z += Math.random() * 2;
+		                    puck2.pos.x -= Math.random() * 2;
+		                    puck2.pos.z -= Math.random() * 2;
+		                    Puck.bound(puck1, puck2);
+		                    return;
+		                }
+		            }
+		            let d = Puck.radius * 2 - Math.sqrt(sqDis);
+		            let modify = t.multiplyScalar(d / 2);
+		            puck1.pos.sub(modify);
+		            puck2.pos.add(modify);
+
+		            puck1.isBound(true);
+		            puck2.isBound(false);
+		        }
+		    }
+
+		    static boundWall(puck, wall) {
+		        if (puck.pos.clone().sub(wall.point).dot(wall.normal) < Wall.eps + Puck.radius) {
+		            let vN = wall.normal.clone().multiplyScalar(puck.vel.dot(wall.normal));
+		            let vT = puck.vel.clone().sub(vN);
+		            puck.vel.copy(vT.add(vN.multiplyScalar(-Wall.cR)));
+		            let modify = wall.normal.clone().multiplyScalar(Puck.radius - (puck.pos.clone().sub(wall.point).dot(wall.normal)));
+		            puck.pos.add(modify);
+		            puck.isBound(true);
+		        }
+		    }
+		}
+
+		function init() {
+		    var width = window.innerWidth;
+		    var height = window.innerHeight;
+
+		    scene = new THREE.Scene();
+
+		    camera = new THREE.PerspectiveCamera(60, width / height, 1, 2000);
+		    camera.position.set(0, 200, 320);
+
+		    //listenter
+		    listenerInit();
+
+		    renderer = new THREE.WebGLRenderer({ antialias: true });
+		    renderer.setSize(width, height);
+		    renderer.setClearColor(0x808080);
+
+		    controls = new THREE.OrbitControls(camera, renderer.domElement);
+		    document.body.appendChild (renderer.domElement);
+
+		    initLight();
+
+		    sceneInit();
+
+		    pucksInit();
+
+		    wallsInit();
+
+		    clock = new THREE.Clock();
+		}
+
+	function listenerInit() {
+	    // create an AudioListener and add it to the camera
+	    listener = new THREE.AudioListener();
+	    camera.add(listener);
+	}
+
+	function pucksInit() {
+	    let puckY = 2;
+	    for (let i = 0; i < 5; i++) {
+	        pucks.push(new Puck(listener));
+	        scene.add(pucks[i].puck);
+	    }
+	}
+
+	function wallsInit() {
+  	  let wallHeight = 25;
+  	  let wallInfo = [
+  	      { "pos": [205, 0], "size": [10, 420], "point": [200, 0], "normal": [-1, 0] },
+  	      { "pos": [-205, 0], "size": [10, 420], "point": [-200, 0], "normal": [1, 0] },
+  	      { "pos": [0, 205], "size": [400, 10], "point": [0, 200], "normal": [0, -1] },
+  	      { "pos": [0, -205], "size": [400, 10], "point": [0, -200], "normal": [0, 1] },
+  	  ];
+  	  wallInfo.forEach((i) => {
+  	      walls.push(
+  	          new Wall(
+  	              new THREE.Vector3(i.pos[0], wallHeight / 2, i.pos[1]),//position
+  	              new THREE.Vector3(i.size[0], wallHeight, i.size[1]),//size
+  	              new THREE.Vector3(i.point[0], 0, i.point[1]),//point
+  	              new THREE.Vector3(i.normal[0], 0, i.normal[1])//normal
+  	          )
+  	      );
+  	  });
+  	  scene.add(walls[0].wall);
+  	  scene.add(walls[1].wall);
+  	  scene.add(walls[2].wall);
+  	  scene.add(walls[3].wall);
+  	  
+	}
+
+
+	function sceneInit() {
+  	  var floor = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.MeshPhongMaterial());
+   	 scene.add(floor);
+  	  floor.rotation.x = -Math.PI / 2;
+	}
+
+	function initLight() {
+  	  //環境光
+  	  let ambientLight = new THREE.AmbientLight(0x404040);
+  	  scene.add(ambientLight);
+	}
+
+	function animate() {
+ 	   let dt = clock.getDelta();
+   	 for (let i = 0; i < pucks.length; i++) {
+ 	        pucks[i].vel.add(pucks[i].force.clone().multiplyScalar(dt));
+ 	        pucks[i].pos.add(pucks[i].vel.clone().multiplyScalar(dt));
+	        pucks[i].puck.position.copy(pucks[i].pos);
+
+   	     walls.forEach((wall) => {
+    	        Bound.boundWall(pucks[i], wall);
+       	 })
+
+ 	       for (let j = i; j < pucks.length; j++) {
+ 	           if (j == i) continue;
+ 	           Bound.boundPuck(pucks[i], pucks[j]);
+ 	       }
+ 	   }
+ 	   renderer.render(scene, camera);
+	    requestAnimationFrame(animate);
+	}
+
+  </script>
+    <script>
+        //檢查FPS
+        javascript: (function () { 
+        	var script = document.createElement('script'); 
+        	script.onload = function () { 
+        		var stats = new Stats(); 
+        		stats.dom.style.opacity = 0.75;
+        		document.body.appendChild(stats.dom); 
+        		requestAnimationFrame(function loop() { 
+        			stats.update(); 
+        			requestAnimationFrame(loop) 
+        		}); 
+        	}; 
+        	script.src = 'https://mrdoob.github.io/stats.js/build/stats.min.js'; 
+        	document.head.appendChild(script); 
+        })();
+
+        init();
+        animate();
+    </script>
+</body>
+
+</html>
