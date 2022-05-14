@@ -166,8 +166,7 @@ function agentMesh () {
   indices.push (0,3,2, 0,2,1, 1,3,0, 1,2,3);
 	geometry.setIndex (indices);
   geometry.computeVertexNormals();
-	//return new THREE.Mesh (geometry, new THREE.MeshBasicMaterial({color:'cyan', wireframe:true}))  
-	return theObject;
+	return new THREE.Mesh (geometry, new THREE.MeshBasicMaterial({color:'cyan', wireframe:true}))  
 }
 
 function init() {
@@ -212,7 +211,8 @@ function init() {
   document.addEventListener('pointerdown', onDocumentMouseDown, false);
   ////////////////////////
 	let mesh = agentMesh ();
-  agent = new Agent(new THREE.Vector3(-100 + 200 * Math.random(), 0, -100 + 200 * Math.random()), mesh);
+  //agent = new Agent(new THREE.Vector3(-100 + 200 * Math.random(), 0, -100 + 200 * Math.random()), mesh);
+  agent = new Agent(theObject);
 
   /*
   renderer = new THREE.WebGLRenderer();
