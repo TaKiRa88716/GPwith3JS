@@ -36,35 +36,6 @@
 	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 	
 <script type="module">
-import * as THREE from 'https://cdn.skypack.dev/three@0.136';
-import { OrbitControls } from 'https://cdn.skypack.dev/three@0.136/examples/jsm/controls/OrbitControls.js';
-
-import { MTLLoader } from 'https://cdn.skypack.dev/three@0.136/examples/jsm/loaders/MTLLoader.js';
-import { OBJLoader } from 'https://cdn.skypack.dev/three@0.136/examples/jsm/loaders/OBJLoader.js';
-
-var camera, scene, renderer, clock;
-var theObject;
-
-var raycaster;
-var mouse = new THREE.Vector2();
-var pickables = [];
-var agent;
-var targetMesh;
-
-var mouseX = 0,
-  mouseY = 0;
-
-var windowHalfX = window.innerWidth / 2;
-var windowHalfY = window.innerHeight / 2;
-var controls;
-var bs;
-var modelName;
-var theModel;
-
-readModel ("bus");
-init();
-animate();
-
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 function clamp (val, min, max) { // min <= val <= max
@@ -152,6 +123,35 @@ function onDocumentMouseDown(event) {
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+	
+import * as THREE from 'https://cdn.skypack.dev/three@0.136';
+import { OrbitControls } from 'https://cdn.skypack.dev/three@0.136/examples/jsm/controls/OrbitControls.js';
+
+import { MTLLoader } from 'https://cdn.skypack.dev/three@0.136/examples/jsm/loaders/MTLLoader.js';
+import { OBJLoader } from 'https://cdn.skypack.dev/three@0.136/examples/jsm/loaders/OBJLoader.js';
+
+var camera, scene, renderer, clock;
+var theObject;
+
+var raycaster;
+var mouse = new THREE.Vector2();
+var pickables = [];
+var agent;
+var targetMesh;
+
+var mouseX = 0,
+  mouseY = 0;
+
+var windowHalfX = window.innerWidth / 2;
+var windowHalfY = window.innerHeight / 2;
+var controls;
+var bs;
+var modelName;
+var theModel;
+
+readModel ("bus");
+init();
+animate();
 
 function agentMesh () {
 	// mesh facing +x
