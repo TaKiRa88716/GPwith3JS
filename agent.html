@@ -138,11 +138,9 @@ function readModel (modelName, targetSize=40) {
 		theObject.name = 'OBJ'
 		scene.add (theObject);
 		
-		theObject.setRotationFromEuler (new THREE.Euler (3.1416/2, 0, -3.1416/2, 'ZYX'))
+		theObject.setRotationFromEuler (new THREE.Euler (3.1416/2, 3.1416/2, -3.1416/2, 'ZYX'))
 
     }, onProgress, onError);
-    
-    theObject.rotation.x(Math.PI/2);
 
   });
 
