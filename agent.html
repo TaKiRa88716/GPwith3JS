@@ -45,7 +45,7 @@ function clamp (val, min, max) { // min <= val <= max
 class Agent {
   constructor(pos, group) {
     this.pos = pos.clone();
-    this.vel = new THREE.Vector3();
+    this.vel = new THREE.Vector3(2*Math.PI * Math.random(), 0, 2*Math.PI * Math.random());
     this.force = new THREE.Vector3();
     this.target = null;
     this.size = 3;
@@ -212,8 +212,7 @@ function init() {
   document.addEventListener('pointerdown', onDocumentMouseDown, false);
   ////////////////////////
 	let mesh = agentMesh ();
-  agent = new Agent(new THREE.Vector3(-100 + 200 * Math.random(), 0, -100 + 200 * Math.random()), mesh);
-  //agent = new Agent(theObject);
+  agent = new Agent(new THREE.Vector3(-100 + 200 * Math.random(), 0, -100 + 200 * Math.random()), true);//mesh);
 
   /*
   renderer = new THREE.WebGLRenderer();
