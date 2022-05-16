@@ -53,21 +53,6 @@
                     let dst = this.target.distanceTo(this.pos);
                     if (dst < this.ARRIVAL_R) {  // close enough
                         this.vel.setLength(dst);
-                        /*if(dst > 0.1){
-                            if (state == 'Stand') {
-                                ts = clock.getElapsedTime();
-                                state = 'S2W';
-                                //power = 50;
-                            } else if (state == 'Walk') {
-                                //power = 0.1;
-                                ts = clock.getElapsedTime();
-                                posew2s0.lThigh = intKey[0];
-                                posew2s0.rThigh = intKey[1];
-                                state = 'W2S';
-                            }
-                        }else{
-                            state = 'Stand';
-                        }*/
                         
                     }
                 }
@@ -308,7 +293,7 @@
   		
 		  buildSteve();
 		  bus = torso;
-		  readModel('bus');
+		  readModel('mybus');
 		  agent = new Agent(new THREE.Vector3(-100 + 500 * Math.random(), 0, -100 + 500 * Math.random()), bus);
 
 		  power = 5.0;
@@ -838,7 +823,7 @@
                 )
                 
                 scene.add (theObject);
-                theObject.setRotationFromEuler (new THREE.Euler (3.1416/2, -3.1416/2, -3.1416/2, 'ZYX'))
+                //theObject.setRotationFromEuler (new THREE.Euler (3.1416/2, -3.1416/2, -3.1416/2, 'ZYX'))
             }, onProgress, onError);
 
             });
