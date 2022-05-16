@@ -779,7 +779,7 @@
 		  if (c == "ArrowDown")  
 		 	  power /= 1.2;   
 		 	
-		  power = Math.clamp(power, 0, 50.0); 
+		  power = Math.clamp(power, 0, 80.0); 
 		  
 		  
 		  var angle_thrust = angle;
@@ -838,7 +838,7 @@
                 )
                 
                 scene.add (theObject);
-                //theObject.setRotationFromEuler (new THREE.Euler (3.1416, -3.1416/2, -3.1416/2, 'ZYX'))
+                theObject.setRotationFromEuler (new THREE.Euler (3.1416, -3.1416/4, -3.1416/2, 'ZYX'))
             }, onProgress, onError);
 
             });
