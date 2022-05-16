@@ -53,7 +53,7 @@
                     let dst = this.target.distanceTo(this.pos);
                     if (dst < this.ARRIVAL_R) {  // close enough
                         this.vel.setLength(dst);
-                        if(dst > 0.1){
+                        /*if(dst > 0.1){
                             if (state == 'Stand') {
                                 ts = clock.getElapsedTime();
                                 state = 'S2W';
@@ -67,7 +67,7 @@
                             }
                         }else{
                             state = 'Stand';
-                        }
+                        }*/
                         
                     }
                 }
@@ -308,7 +308,7 @@
   		
 		  buildSteve();
 		  bus = torso;
-		  readModel('bus');
+		  readModel('mybus');
 		  agent = new Agent(new THREE.Vector3(-100 + 500 * Math.random(), 0, -100 + 500 * Math.random()), bus);
 
 		  power = 5.0;
