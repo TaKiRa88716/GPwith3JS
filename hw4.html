@@ -823,6 +823,7 @@
                 )
                 
                 scene.add (theObject);
+                theObject.position.y = 6;
                 //theObject.setRotationFromEuler (new THREE.Euler (3.1416/2, -3.1416/2, -3.1416/2, 'ZYX'))
             }, onProgress, onError);
 
@@ -850,7 +851,7 @@
             var theObject1 =  new THREE.Object3D();
             theObject1.add (object);
             object.scale.set (scaleSet, scaleSet, scaleSet);
-            object.position.set (-center.x*scaleSet, size.y/2, -center.z*scaleSet);
+            object.position.set (-center.x*scaleSet, 0, -center.z*scaleSet);
             
             return theObject1;
                     
