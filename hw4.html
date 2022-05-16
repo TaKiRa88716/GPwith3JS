@@ -282,7 +282,7 @@
 		  document.addEventListener('keydown', logKey);
 		  
 		  var gridXZ = new THREE.GridHelper(200, 20, 'red', 'white');
-		  scene.add(gridXZ);
+		  //scene.add(gridXZ);
 
 		  camera3rd = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 1, 1000);
 
@@ -823,7 +823,6 @@
                 )
                 
                 scene.add (theObject);
-                theObject.position.y = 6;
                 //theObject.setRotationFromEuler (new THREE.Euler (3.1416/2, -3.1416/2, -3.1416/2, 'ZYX'))
             }, onProgress, onError);
 
