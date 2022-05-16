@@ -82,7 +82,7 @@
                 // non PD version
                 if (this.vel.length() > 0.1) {
                         this.angle = Math.atan2 (-this.vel.z, this.vel.x)
-                        this.model.rotation.y = this.angle-Math.PI/2;
+                        this.model.rotation.y = this.angle+Math.PI/2;
                 }
             }
             
@@ -836,9 +836,9 @@
                             mesh.material.side = THREE.DoubleSide;
                     }
                 )
-                //_ChangeMaterialEmissive(theObject)
+                
                 scene.add (theObject);
-                //theObject.setRotationFromEuler (new THREE.Euler (3.1416, 0, -3.1416/2, 'ZYX'))
+                theObject.setRotationFromEuler (new THREE.Euler (3.1416, -3.1416/2, -3.1416/2, 'ZYX'))
             }, onProgress, onError);
 
             });
