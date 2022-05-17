@@ -109,7 +109,7 @@
 		var power, angle;
 		var c,texture;
 
-		var agent,bus,theObject,intKey;
+		var agent,follower,theObject,intKey;
 
 
 		// three STATES: Walk, S2W, Stand
@@ -292,9 +292,9 @@
   		//texture = loader.load ('https://i.imgur.com/IejOuMK.png');//by teacher
   		
 		  buildSteve();
-		  bus = torso;
+		  follower = torso;
 		  readModel('mybus');
-		  agent = new Agent(new THREE.Vector3(-100 + 500 * Math.random(), 0, -100 + 500 * Math.random()), bus);
+		  agent = new Agent(new THREE.Vector3(-100 + 500 * Math.random(), 0, -100 + 500 * Math.random()), follower);
 
 		  power = 5.0;
   		angle = 0.0;
@@ -823,7 +823,8 @@
                 )
                 
                 scene.add (theObject);
-                //theObject.setRotationFromEuler (new THREE.Euler (3.1416/2, -3.1416/2, -3.1416/2, 'ZYX'))
+                //不用轉
+                //theObject.setRotationFromEuler (new THREE.Euler (3.1416/2, 0, -3.1416/2, 'ZYX'))
             }, onProgress, onError);
 
             });
@@ -847,12 +848,12 @@
             var objSize = Math.max (size.x, size.y, size.z);
             var scaleSet = targetSize/objSize;
                         
-            var theObject1 =  new THREE.Object3D();
-            theObject1.add (object);
+            var theObject =  new THREE.Object3D();
+            theObject.add (object);
             object.scale.set (scaleSet, scaleSet, scaleSet);
             object.position.set (-center.x*scaleSet, 0, -center.z*scaleSet);
             
-            return theObject1;
+            return theObject;
                     
         }
 
@@ -860,13 +861,13 @@
 		function animate() {
 			var dt = clock.getDelta();
             
-            agent.update(dt);
-            // car update
-            if(theObject != undefined){
-                theObject.position.copy(pos);
-                update(dt);
-                theObject.rotation.z = angle;
-                agent.setTarget(pos.x,pos.y,pos.z);
+      agent.update(dt);
+      
+      if(theObject != undefined){
+        theObject.position.copy(pos);
+        update(dt);
+        theObject.rotation.z = angle;
+        agent.setTarget(pos.x,pos.y,pos.z);
       }
 
 			if(c == "KeyC" && checkview == 1){
@@ -885,12 +886,6 @@
   			camera3rd.lookAt (thirdAt);
 			}
 
-			/*var dt = clock.getDelta();
-			update(dt);
-			torso.position.copy(pos);
-			torso.position.y = HH;
-			torso.rotation.y = angle + Math.PI/2;
-		  let intKey;*/
 		  switch (state) {
 		    case 'Stand':
 		      console.log('... in stand');
