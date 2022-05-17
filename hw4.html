@@ -787,7 +787,7 @@
 		  pos.add(vel.clone().multiplyScalar(dt));
 		}
 
-		function following(){
+		function following(dt){
 			theObject.position.copy(pos);
       update(dt);
       theObject.rotation.z = angle;
@@ -871,7 +871,7 @@
       agent.update(dt);//追蹤的steve
       
       if(theObject != undefined){
-        following();
+        following(dt);
       }
 
 			if(c == "KeyC" && checkview == 1){
