@@ -800,7 +800,7 @@
       update(dt);
       theObject.rotation.z = angle;
 
-      agent.setTarget(pos.x+Math.cos(Math.PI/2*angle),pos.y,pos.z+Math.sin(angle*Math.PI/2));
+      agent.setTarget(pos.x+Math.cos(angle),pos.y,pos.z+Math.sin(Math.PI/2));
       //agent.setTarget(pos.x+30,pos.y,pos.z+30);//設定steve的目標
 		}
 
