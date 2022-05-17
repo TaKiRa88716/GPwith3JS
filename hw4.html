@@ -800,13 +800,7 @@
       update(dt);
       theObject.rotation.z = angle;
 
-      if(theObject.vel.x==0 && theObject.vel.z==0)
-      	theObject.vel.z=1;
-      let vl = Math.acos(theObject.vel.z / Math.sqrt(theObject.vel.x * theObject.vel.x + theObject.vel.z * theObject.vel.z));
-      if (theObject.vel.x>0)
-      	vl = 2*Math.PI - vl;
-      let rt = new THREE.Vector3(theObject.vel.x-15*Math.cos(vl), -0.35, theObject.vel.z-15*Math.sin(vl));
-      agent.setTarget(rt);
+      agent.setTarget(pos.x+Math.PI*angle*sin(Math.PI/4),pos.y,pos.z+Math.PI*angle*cos(Math.PI/4));
       //agent.setTarget(pos.x+30,pos.y,pos.z+30);//設定steve的目標
 		}
 
