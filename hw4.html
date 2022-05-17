@@ -787,6 +787,13 @@
 		  pos.add(vel.clone().multiplyScalar(dt));
 		}
 
+		function following(){
+			theObject.position.copy(pos);
+      update(dt);
+      theObject.rotation.z = angle;
+      agent.setTarget(pos.x,pos.y,pos.z);//設定steve的目標
+		}
+
 
 		function readModel (modelName, targetSize=150) {
 
@@ -864,10 +871,7 @@
       agent.update(dt);//追蹤的steve
       
       if(theObject != undefined){
-        theObject.position.copy(pos);
-        update(dt);
-        theObject.rotation.z = angle;
-        agent.setTarget(pos.x-100,pos.y,pos.z);//設定steve的目標
+        following();
       }
 
 			if(c == "KeyC" && checkview == 1){
