@@ -284,6 +284,14 @@
 		  var gridXZ = new THREE.GridHelper(200, 20, 'red', 'white');
 		  scene.add(gridXZ);
 
+		  var directionalLight = new THREE.DirectionalLight(0xffffff);
+  directionalLight.position.set(0, 0, 1).normalize();
+  scene.add(directionalLight);
+
+  var pointLight = new THREE.PointLight (0xffffff);
+  pointLight.position.set (100,200,-100);
+  scene.add (pointLight);
+
 		  camera3rd = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 1, 1000);
 
 		  var loader = new THREE.TextureLoader();
